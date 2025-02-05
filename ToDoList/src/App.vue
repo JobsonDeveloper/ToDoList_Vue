@@ -2,6 +2,9 @@
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import { reactive } from "vue";
+import Cabecalho from "./components/Cabecalho.vue";
+import Formulario from "./components/Formulario.vue";
+import ListaTarefas from "./components/ListaTarefas.vue";
 
 const estado = reactive({
   tarefas: [
@@ -70,46 +73,10 @@ const cadastraTarefa = () => {
 
 <template>
   <main class="container">
-    <header class="p-5 mb-4 mt-4 bg-light rounded-3">
-      <h1>Minhas tarefas</h1>
-      <p>
-        Você possui {{ getTarefasPendentes().length }} tarefas pendentes
-      </p>
-    </header>
+    <Cabecalho :tarefas-pendentes="getTarefasPendentes().length"/>
 
-    <form @submit.prevent="cadastraTarefa">
-      <div class="row">
-        <div class="col">
-          <input type="text" class="form-control" :value="estado.tarefaTemporaria" @change="event => estado.tarefaTemporaria = event.target.value" required>
-        </div>
+    <Formulario :cadastra-tarefa="cadastraTarefa" :tarefa-temporaria="tarefaTemporaria" :atualiza-filtro="atualizaFiltro" :edita-tarefa-temp="event => estado.tarefaTemporaria = event.target.value"/>
 
-        <div class="col-md-2">
-          <button type="submit" class="btn btn-primary">Cadastrar</button>
-        </div>
-
-        <div class="col-md-2">
-          <select class="form-control" @change="atualizaFiltro">
-            <option value="todas">Todas</option>
-            <option value="pendentes">Pendentes</option>
-            <option value="finalizadas">Finalizadas</option>
-          </select>
-        </div>
-      </div>
-    </form>
-
-    <ul class="list-group mt-4" v-for="tarefas in getTarefas()">
-      <li class="list-group-item">
-        <input :checked="tarefas.finalizada" :id="tarefas.titulo" type="checkbox" @change="event => tarefas.finalizada = event.target.checked">
-        <label :for="tarefas.titulo" class="ms-3" :class="{ done: tarefas.finalizada }">
-          {{ tarefas.titulo }}
-        </label>
-      </li>
-    </ul>
+    <ListaTarefas :tarefas="getTarefas()"/>
   </main>
 </template>
-
-<style scoped>
-.done {
-  text-decoration: line-through;
-}
-</style>
