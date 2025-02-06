@@ -1,5 +1,5 @@
 <script setup>
-    const props = defineProps(["tarefas","remover"]);
+    const props = defineProps(["tarefas","remover", "editarTarefa"]);
 </script>
 
 <template>
@@ -7,7 +7,7 @@
         <li class="list-group-item d-flex justify-content-between">
             <div>
                 <input :checked="tarefas.finalizada" :id="tarefas.titulo" type="checkbox"
-                    @change="event => tarefas.finalizada = event.target.checked">
+                    @change="editarTarefa(tarefas.titulo, tarefas.finalizada)">
                 <label :for="tarefas.titulo" class="ms-3" :class="{ done: tarefas.finalizada }">
                     {{ tarefas.titulo }}
                 </label>

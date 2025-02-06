@@ -23,6 +23,7 @@ const removeItem = (item) => {
     if (elemento.titulo === item) {
       const index = estado.tarefas.indexOf(elemento);
       estado.tarefas.splice(index, 1);
+      atualizaLocalStorage();
     }
   })
 }
@@ -50,19 +51,59 @@ const getTarefas = () => {
   }
 }
 
-const atualizaLocalStorage = () => {
-
-}
-
 const cadastraTarefa = () => {
+  const { tarefas, tarefaTemporaria } = estado;
+
   const tarefaNova = {
-    titulo: estado.tarefaTemporaria,
+    titulo: tarefaTemporaria.toLowerCase(),
     finalizada: false
   }
-  estado.tarefas.push(tarefaNova);
 
+  if (tarefas.length == 0) {
+    estado.tarefas.push(tarefaNova);
+    atualizaLocalStorage();
+  }
+  else {
+    const repetido = tarefas.find((item) => item.titulo == tarefaTemporaria.toLowerCase());
+    if (repetido) {
+      alert("Item já cadastrado!");
+    }
+    else {
+      estado.tarefas.push(tarefaNova);
+      atualizaLocalStorage();
+    }
+  }
   estado.tarefaTemporaria = "";
 }
+
+const atualizaLocalStorage = () => {
+  const { tarefas } = estado;
+
+  localStorage.setItem("ToDoList", JSON.stringify(tarefas));
+}
+
+const atualizaLista = () => {
+  const listaRegistrada = JSON.parse(localStorage.getItem("ToDoList"));
+
+  if (listaRegistrada) {
+    listaRegistrada.forEach((tarefa) => {
+      estado.tarefas.push(tarefa);
+    });
+  }
+}
+
+const editarTarefa = (titulo, finalizado) => {
+  estado.tarefas.forEach((item) => {
+    if (item.titulo == titulo) {
+      item.finalizada = !finalizado;
+      atualizaLocalStorage();
+    }
+  });
+}
+
+(() => {
+  atualizaLista();
+})();
 
 </script>
 
@@ -70,9 +111,9 @@ const cadastraTarefa = () => {
   <main class="page">
     <section class="container">
       <Cabecalho :tarefas-pendentes="getTarefasPendentes().length" />
-      <Formulario :cadastra-tarefa="cadastraTarefa" :tarefa-temporaria="tarefaTemporaria"
+      <Formulario :cadastra-tarefa="cadastraTarefa" :tarefa-temporaria="estado.tarefaTemporaria"
         :atualiza-filtro="atualizaFiltro" :edita-tarefa-temp="event => estado.tarefaTemporaria = event.target.value" />
-      <ListaTarefas :tarefas="getTarefas()" :remover="removeItem" />
+      <ListaTarefas :tarefas="getTarefas()" :remover="removeItem" :editarTarefa="editarTarefa" />
     </section>
   </main>
 </template>
