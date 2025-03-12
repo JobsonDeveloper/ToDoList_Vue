@@ -1,4 +1,3 @@
-### Lista de tarefas
 [Veja o site](https://vue-to-do-list-mu.vercel.app/)
 
 ### Ferramentas utiliizadas:
